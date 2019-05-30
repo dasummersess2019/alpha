@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!-- Front End CS 490: Daniel Mestre -->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/style.css"> 
+        <title>CS490 Front End</title>
+    </head>
+    <body>
+        <div id="mainbox">
+            <h1>CS490 Project</h1>
+
+            <input type="text" id="userID" placeholder="UCID"> <br>
+            <input type="password" id="userPass" placeholder="Password"><br>
+            <button id="loginButton">Login</button>
+
+        </div>
+
+        <div id="responses">
+           <p id="njitResponse"></p> 
+           <p id="dbResponse"></p> 
+        </div>
+
+        <script>
+            
+            const form = {
+                userID: document.getElementById('userID'),
+                userPass: document.getElementById('userPass'),
+                login: document.getElementById('loginButton'),
+                njit: document.getElementById('njitResponse'),
+                db: document.getElementById('dbResponse')
+            };
+
+            form.login.addEventListener('click',checkLogin);
+
+            function checkLogin() {
+                var xhr = new XMLHttpRequest();
+
+                xhr.onload = function(){
+                    if(this.status == 200) {
+                        console.log(this.responseText);
+                        const jsonData = JSON.parse(this.responseText);
+
+                        form.njit.innerHTML = "NJIT Says: " + (Number(jsonData['NJIT']) ? "We recognize you!" : "We don't know you.");
+                        form.db.innerHTML = "DB Says: " + (Number(jsonData['DB']) ? "Welcome to the database!" : "Who are you?");
+                    }
+                };
+
+                const xhrData = `userID=${form.userID.value}&userPass=${form.userPass.value}`;
+
+                xhr.open('POST','midrequest.php',true);
+
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                xhr.send(xhrData);
+            }
+
+        </script>
+    </body>
+</html>
